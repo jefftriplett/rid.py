@@ -18,7 +18,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='regressive-imagery-dictionary',
-    version='0.1.6',
+    version='0.1.7',
     url='https://github.com/jefftriplett/rid.py',
     license='MIT',
     description='The Regressive Imagery Dictionary (RID) is a coding scheme for text analysis that is designed to measure "primordial" and conceptual content.',
