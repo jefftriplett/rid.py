@@ -1,4 +1,8 @@
 include LICENSE
 include README.md
 
+exclude .bumpversion.cfg
+exclude requirements.txt
+exclude tasks.py
+
 recursive-exclude * *.py[co]
