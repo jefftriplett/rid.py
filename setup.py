@@ -23,7 +23,6 @@ setup(
     license='MIT',
     description='The Regressive Imagery Dictionary (RID) is a coding scheme for text analysis that is designed to measure "primordial" and conceptual content.',
     long_description=__doc__,
-    author='John Wiseman',
     maintainer='Jeff Triplett',
     maintainer_email='jeff.triplett@gmail.com',
     packages=find_packages(),
