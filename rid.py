@@ -22,10 +22,13 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import re
-import sys
-import StringIO
 import getopt
+import re
+import StringIO
+import sys
+
+
+__version__ = '0.1.6'
 
 
 class RegressiveImageryDictionary(object):
@@ -3830,6 +3833,10 @@ class RIDApp(object):
             rid.display_results(results)
 
 
-if __name__ == '__main__':
+def main():
     app = RIDApp()
     app.run(sys.argv)
+
+
+if __name__ == '__main__':
+    main()
