@@ -24,7 +24,7 @@
 
 import getopt
 import re
-import StringIO
+from io import StringIO
 import sys
 
 
@@ -53,7 +53,7 @@ class RegressiveImageryDictionary(object):
             rid_in.close()
 
     def load_dictionary_from_string(self, string):
-        rid_in = StringIO.StringIO(string)
+        rid_in = StringIO(string)
         self.load_dictionary(rid_in)
 
     def load_dictionary(self, stream):
@@ -88,7 +88,7 @@ class RegressiveImageryDictionary(object):
             exc_in.close()
 
     def load_exclusion_list_from_string(self, string):
-        exc_in = StringIO.StringIO(string)
+        exc_in = StringIO(string)
         self.load_exclusion_list(exc_in)
 
     def load_exclusion_list(self, stream):
@@ -117,7 +117,7 @@ class RegressiveImageryDictionary(object):
             results.category_count[category] += 1
             results.category_words[category].append(token)
 
-        tokens = tokenize(text)
+        tokens = list(tokenize(text))
         results.word_count = len(tokens)
         for token in tokens:
             if not self.token_is_excluded(token):
@@ -130,8 +130,8 @@ class RegressiveImageryDictionary(object):
         # Detailed category breakout
         total_count = 0
         for (category, count) in sorted(results.category_count.items(), key=lambda x: x[1], reverse=True):
-            print "%-60s %5s" % (category.full_name(), count)
-            print "    " + " ".join(results.category_words[category])
+            print("%-60s %5s" % (category.full_name(), count))
+            print("    " + " ".join(results.category_words[category]))
             total_count += count
 
         # Summary for each top-level category
@@ -141,7 +141,7 @@ class RegressiveImageryDictionary(object):
             for top_cat in top_categories:
                 if cat.isa(top_cat):
                     return top_cat
-            print "Category %s doesn't exist in %s" % (category, top_categories)
+            print("Category %s doesn't exist in %s" % (category, top_categories))
 
         top_category_counts = {}
         for top_category in top_categories:
@@ -152,7 +152,7 @@ class RegressiveImageryDictionary(object):
             if top_category:
                 top_category_counts[top_category] += results.category_count[category]
 
-        print ""
+        print("")
 
         def percent(x, y):
             if y == 0:
@@ -161,26 +161,26 @@ class RegressiveImageryDictionary(object):
                 return (100.0 * x) / y
         for top_category in top_categories:
             count = top_category_counts[top_category]
-            print "%-20s: %f %%" % (top_category.full_name(), percent(count, total_count))
+            print("%-20s: %f %%" % (top_category.full_name(), percent(count, total_count)))
 
         # Word count
-        print "\n%d words total" % (results.word_count,)
+        print("\n%d words total" % (results.word_count,))
 
     def display_results_html(self, results, title):
         # Detailed category breakout
         total_count = 0
-        print "<html><head>"
+        print("<html><head>")
 
-        print "<meta http-equiv='content-type' content='text/html; charset=UTF-8'>"
-        print """
+        print("<meta http-equiv='content-type' content='text/html; charset=UTF-8'>")
+        print("""
     <style type="text/css">
         .word-count { vertical-align: super; font-size: 50%; }
         .twisty { color: blue; font-family: monospace; }
         a.twisty { text-decoration: none; }
     </style>
-"""
-        print "<title>%s</title>" % (title,)
-        print """
+""")
+        print("<title>%s</title>" % (title,))
+        print("""
 <script>
 
 var TWISTY_EXPANDED = ' &#9662; ';
@@ -242,24 +242,24 @@ function toggle(cat) {
 }
 
 </script>
-"""
-        print "</head><body>"
-        print "<h1>%s</h1>" % (title,)
-        print "<p><a href='javascript:hideAll()'>- collapse all</a>    <a href='javascript:showAll()'>+ expand all</a></p>"
-        print "<table width='100%'>"
+""")
+        print("</head><body>")
+        print("<h1>%s</h1>" % (title,))
+        print("<p><a href='javascript:hideAll()'>- collapse all</a>    <a href='javascript:showAll()'>+ expand all</a></p>")
+        print("<table width='100%'>")
         for (category, count) in sorted(results.category_count.items(), key=lambda x: x[1], reverse=True):
             sys.stdout.write("<tr>")
             sys.stdout.write("<td class='%s' id='%s'>" % ("category", category.full_name() + "-cat"))
             sys.stdout.write("""<a class='twisty' href="javascript:toggle('%s')"><span class='twisty'> &#9662; </span></a>""" % (category.full_name(),))
             sys.stdout.write("%s</td><td width='*' align='right'>%s</td></tr>""" % (category.full_name(), count))
-            print "<tr class='%s' id='%s'>" % ("words", category.full_name())
-            print "<td style='padding-left: 1cm;' colspan='2'>"
+            print("<tr class='%s' id='%s'>" % ("words", category.full_name()))
+            print("<td style='padding-left: 1cm;' colspan='2'>")
             words = uniq_c(results.category_words[category])
             for word in words:
                 sys.stdout.write("%s<span class='word-count'>%s</span> " % (word))
-            print "\n</td></tr>"
+            print("\n</td></tr>")
             total_count += count
-        print "</table>"
+        print("</table>")
 
         # Summary for each top-level category
         top_categories = self.category_tree.children.values()
@@ -268,7 +268,7 @@ function toggle(cat) {
             for top_cat in top_categories:
                 if cat.isa(top_cat):
                     return top_cat
-            print "Category %s doesn't exist in %s" % (category, top_categories)
+            print("Category %s doesn't exist in %s" % (category, top_categories))
 
         top_category_counts = {}
         for top_category in top_categories:
@@ -285,15 +285,15 @@ function toggle(cat) {
             else:
                 return (100.0 * x) / y
 
-        print "<table>"
+        print("<table>")
         for top_category in top_categories:
             count = top_category_counts[top_category]
-            print "<tr><td>%s:</td><td>%f %%</td></tr>" % (top_category.full_name(), percent(count, total_count))
-        print "<table>"
+            print("<tr><td>%s:</td><td>%f %%</td></tr>" % (top_category.full_name(), percent(count, total_count)))
+        print("<table>")
 
         # Word count
-        print "<p>%d words total</p>" % (results.word_count,)
-        print "</body></html>"
+        print("<p>%d words total</p>" % (results.word_count,))
+        print("</body></html>")
 
     def ensure_category(self, *args):
         def ensure_cat_aux(category, category_path):
@@ -3779,15 +3779,15 @@ BREADTH
 class RIDApp(object):
 
     def usage(self, args):
-        print "usage: %s [-h [-t TITLE] | -d FILE | -e FILE | --add-dict=FILE | --add-exc=FILE]" % (args[0],)
-        print "%s reads from standard input and writes to standard output." % (args[0],)
-        print "options:"
-        print "    -h                Generate HTML output."
-        print "    -t TITLE          Use TITLE as the report heading."
-        print "    -d FILE           Replaces the built-in dictionary with FILE."
-        print "    -e FILE           Replaces the built-in exclusion list with FILE."
-        print "    --add-dict=FILE   Processes FILE as a category dictionary."
-        print "    --add-exc=FILE    Processes FILE as an exlusion list."
+        print("usage: %s [-h [-t TITLE] | -d FILE | -e FILE | --add-dict=FILE | --add-exc=FILE]" % (args[0],))
+        print("%s reads from standard input and writes to standard output." % (args[0],))
+        print("options:")
+        print("    -h                Generate HTML output.")
+        print("    -t TITLE          Use TITLE as the report heading.")
+        print("    -d FILE           Replaces the built-in dictionary with FILE.")
+        print("    -e FILE           Replaces the built-in exclusion list with FILE.")
+        print("    --add-dict=FILE   Processes FILE as a category dictionary.")
+        print("    --add-exc=FILE    Processes FILE as an exlusion list.")
 
     def run(self, args):
         rid = RegressiveImageryDictionary()
@@ -3816,7 +3816,7 @@ class RIDApp(object):
                 else:
                     sys.stderr.write("%s: illegal option '%s'\n" % (args[0], o))
                     self.usage(args)
-        except getopt.GetoptError, e:
+        except getopt.GetoptError as e:
             sys.stderr.write("%s: %s\n" % (args[0], e.msg))
             self.usage(args)
             sys.exit(1)
