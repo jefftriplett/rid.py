@@ -17,29 +17,25 @@ via: John Wiseman (http://lemonodor.com/archives/001511.html)
 from setuptools import setup, find_packages
 
 setup(
-    name='regressive-imagery-dictionary',
-    version='0.1.8',
-    url='https://github.com/jefftriplett/rid.py',
-    license='MIT',
+    name="regressive-imagery-dictionary",
+    version="0.1.8",
+    url="https://github.com/jefftriplett/rid.py",
+    license="MIT",
     description='The Regressive Imagery Dictionary (RID) is a coding scheme for text analysis that is designed to measure "primordial" and conceptual content.',
     long_description=__doc__,
-    maintainer='Jeff Triplett',
-    maintainer_email='jeff.triplett@gmail.com',
+    maintainer="Jeff Triplett",
+    maintainer_email="jeff.triplett@gmail.com",
     packages=find_packages(),
     package_data={},
-    py_modules=['rid'],
-    entry_points={
-        'console_scripts': [
-            'rid = rid:main',
-        ]
-    },
+    py_modules=["rid"],
+    entry_points={"console_scripts": ["rid = rid:main",]},
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Environment :: Web Environment',
-        'Intended Audience :: Developers',
-        'License :: Public Domain',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Topic :: Utilities'
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Web Environment",
+        "Intended Audience :: Developers",
+        "License :: Public Domain",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Topic :: Utilities",
     ],
 )

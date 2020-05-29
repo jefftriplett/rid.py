@@ -28,7 +28,7 @@ from io import StringIO
 import sys
 
 
-__version__ = '0.1.8'
+__version__ = "0.1.8"
 
 
 class RegressiveImageryDictionary(object):
@@ -39,11 +39,12 @@ class RegressiveImageryDictionary(object):
         3. Call analyze.
         4. Call display_results with the value returned by analyze.
     """
+
     def __init__(self):
         self.category_tree = CategoryRoot()
         self.exclusion_patterns = []
         self.exclusion_pattern = None
-        self.pattern_tree = DiscriminationTree('root', None)
+        self.pattern_tree = DiscriminationTree("root", None)
 
     def load_dictionary_from_file(self, path):
         rid_in = open(path, "r")
@@ -71,12 +72,14 @@ class RegressiveImageryDictionary(object):
             elif num_tabs == 1:
                 secondary_category = line.strip()
                 tertiary_category = None
-            elif num_tabs == 2 and not '(' in line:
+            elif num_tabs == 2 and not "(" in line:
                 tertiary_category = line.strip()
             else:
                 # We have a word pattern.
-                pattern = line.strip().split(' ')[0].lower()
-                category = self.ensure_category(primary_category, secondary_category, tertiary_category)
+                pattern = line.strip().split(" ")[0].lower()
+                category = self.ensure_category(
+                    primary_category, secondary_category, tertiary_category
+                )
                 category.add_word_pattern(pattern)
                 self.pattern_tree.put(pattern, category)
 
@@ -97,7 +100,9 @@ class RegressiveImageryDictionary(object):
             pattern = pattern.replace("*", ".*")
             self.exclusion_patterns.append(pattern)
         # One megapattern to exclude them all
-        self.exclusion_pattern = re.compile('^(' + '|'.join(self.exclusion_patterns) + ')$')
+        self.exclusion_pattern = re.compile(
+            "^(" + "|".join(self.exclusion_patterns) + ")$"
+        )
 
     def token_is_excluded(self, token):
         return self.exclusion_pattern.match(token)
@@ -129,7 +134,9 @@ class RegressiveImageryDictionary(object):
     def display_results(self, results):
         # Detailed category breakout
         total_count = 0
-        for (category, count) in sorted(results.category_count.items(), key=lambda x: x[1], reverse=True):
+        for (category, count) in sorted(
+            results.category_count.items(), key=lambda x: x[1], reverse=True
+        ):
             print("%-60s %5s" % (category.full_name(), count))
             print("    " + " ".join(results.category_words[category]))
             total_count += count
@@ -159,9 +166,12 @@ class RegressiveImageryDictionary(object):
                 return 0
             else:
                 return (100.0 * x) / y
+
         for top_category in top_categories:
             count = top_category_counts[top_category]
-            print("%-20s: %f %%" % (top_category.full_name(), percent(count, total_count)))
+            print(
+                "%-20s: %f %%" % (top_category.full_name(), percent(count, total_count))
+            )
 
         # Word count
         print("\n%d words total" % (results.word_count,))
@@ -172,15 +182,18 @@ class RegressiveImageryDictionary(object):
         print("<html><head>")
 
         print("<meta http-equiv='content-type' content='text/html; charset=UTF-8'>")
-        print("""
+        print(
+            """
     <style type="text/css">
         .word-count { vertical-align: super; font-size: 50%; }
         .twisty { color: blue; font-family: monospace; }
         a.twisty { text-decoration: none; }
     </style>
-""")
+"""
+        )
         print("<title>%s</title>" % (title,))
-        print("""
+        print(
+            """
 <script>
 
 var TWISTY_EXPANDED = ' &#9662; ';
@@ -242,16 +255,29 @@ function toggle(cat) {
 }
 
 </script>
-""")
+"""
+        )
         print("</head><body>")
         print("<h1>%s</h1>" % (title,))
-        print("<p><a href='javascript:hideAll()'>- collapse all</a>    <a href='javascript:showAll()'>+ expand all</a></p>")
+        print(
+            "<p><a href='javascript:hideAll()'>- collapse all</a>    <a href='javascript:showAll()'>+ expand all</a></p>"
+        )
         print("<table width='100%'>")
-        for (category, count) in sorted(results.category_count.items(), key=lambda x: x[1], reverse=True):
+        for (category, count) in sorted(
+            results.category_count.items(), key=lambda x: x[1], reverse=True
+        ):
             sys.stdout.write("<tr>")
-            sys.stdout.write("<td class='%s' id='%s'>" % ("category", category.full_name() + "-cat"))
-            sys.stdout.write("""<a class='twisty' href="javascript:toggle('%s')"><span class='twisty'> &#9662; </span></a>""" % (category.full_name(),))
-            sys.stdout.write("%s</td><td width='*' align='right'>%s</td></tr>""" % (category.full_name(), count))
+            sys.stdout.write(
+                "<td class='%s' id='%s'>" % ("category", category.full_name() + "-cat")
+            )
+            sys.stdout.write(
+                """<a class='twisty' href="javascript:toggle('%s')"><span class='twisty'> &#9662; </span></a>"""
+                % (category.full_name(),)
+            )
+            sys.stdout.write(
+                "%s</td><td width='*' align='right'>%s</td></tr>"
+                "" % (category.full_name(), count)
+            )
             print("<tr class='%s' id='%s'>" % ("words", category.full_name()))
             print("<td style='padding-left: 1cm;' colspan='2'>")
             words = uniq_c(results.category_words[category])
@@ -288,7 +314,10 @@ function toggle(cat) {
         print("<table>")
         for top_category in top_categories:
             count = top_category_counts[top_category]
-            print("<tr><td>%s:</td><td>%f %%</td></tr>" % (top_category.full_name(), percent(count, total_count)))
+            print(
+                "<tr><td>%s:</td><td>%f %%</td></tr>"
+                % (top_category.full_name(), percent(count, total_count))
+            )
         print("<table>")
 
         # Word count
@@ -304,6 +333,7 @@ function toggle(cat) {
                 if not cat in category.children:
                     category.children[cat] = Category(cat, category)
                 return ensure_cat_aux(category.children[cat], category_path)
+
         return ensure_cat_aux(self.category_tree, list(args))
 
 
@@ -314,7 +344,7 @@ class RIDResults(object):
         self.word_count = 0
 
 
-WORD_REGEX = re.compile(r'[^a-zA-Z]+')
+WORD_REGEX = re.compile(r"[^a-zA-Z]+")
 
 
 def tokenize(string):
@@ -325,7 +355,7 @@ def tokenize(string):
 
 def count_leading_tabs(string):
     for i, char in enumerate(string):
-        if char != '\t':
+        if char != "\t":
             return i
 
 
@@ -336,6 +366,7 @@ class DiscriminationTree(object):
     tree, associated with some word pattern.  The retrieve method finds
     the category for a given word, if one exists.
     """
+
     def __init__(self, index, parent):
         self.index = index
         self.parent = parent
@@ -372,7 +403,7 @@ class DiscriminationTree(object):
             return True
         else:
             next_index = path[0]
-            if next_index == '*':
+            if next_index == "*":
                 # Got a '*' so this is a wildcard node that will match
                 # anything that reaches it.
                 self.is_wildcard = True
@@ -417,7 +448,7 @@ class Category(object):
 
 class CategoryRoot(Category):
     def __init__(self):
-        Category.__init__(self, 'root', None)
+        Category.__init__(self, "root", None)
 
     def full_name(self):
         return ""
@@ -3777,10 +3808,14 @@ BREADTH
 
 
 class RIDApp(object):
-
     def usage(self, args):
-        print("usage: %s [-h [-t TITLE] | -d FILE | -e FILE | --add-dict=FILE | --add-exc=FILE]" % (args[0],))
-        print("%s reads from standard input and writes to standard output." % (args[0],))
+        print(
+            "usage: %s [-h [-t TITLE] | -d FILE | -e FILE | --add-dict=FILE | --add-exc=FILE]"
+            % (args[0],)
+        )
+        print(
+            "%s reads from standard input and writes to standard output." % (args[0],)
+        )
         print("options:")
         print("    -h                Generate HTML output.")
         print("    -t TITLE          Use TITLE as the report heading.")
@@ -3797,21 +3832,23 @@ class RIDApp(object):
         title = "RID Analysis"
 
         try:
-            optlist, args = getopt.getopt(sys.argv[1:], 'd:e:ht:', ['add-dict=', 'add-exc='])
+            optlist, args = getopt.getopt(
+                sys.argv[1:], "d:e:ht:", ["add-dict=", "add-exc="]
+            )
             for (o, v) in optlist:
-                if o == '-d':
+                if o == "-d":
                     rid.load_dictionary_from_file(v)
                     load_default_dict = False
-                elif o == '-e':
+                elif o == "-e":
                     rid.load_exclusion_list_from_file(v)
                     load_default_exc = False
-                elif o == '--add-dict':
+                elif o == "--add-dict":
                     rid.load_dictionary_from_file(v)
-                elif o == '--add-exc':
+                elif o == "--add-exc":
                     rid.load_exclusion_list_from_file(v)
-                elif o == '-h':
+                elif o == "-h":
                     html_output = True
-                elif o == '-t':
+                elif o == "-t":
                     title = v
                 else:
                     sys.stderr.write("%s: illegal option '%s'\n" % (args[0], o))
@@ -3838,5 +3875,5 @@ def main():
     app.run(sys.argv)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
