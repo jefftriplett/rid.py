@@ -344,7 +344,7 @@ class RIDResults(object):
         self.word_count = 0
 
 
-WORD_REGEX = re.compile(r"[^a-zA-Z]+")
+WORD_REGEX = re.compile(r"\W+")
 
 
 def tokenize(string):
