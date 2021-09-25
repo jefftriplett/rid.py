@@ -72,7 +72,7 @@ class RegressiveImageryDictionary(object):
             elif num_tabs == 1:
                 secondary_category = line.strip()
                 tertiary_category = None
-            elif num_tabs == 2 and not "(" in line:
+            elif num_tabs == 2 and "(" not in line:
                 tertiary_category = line.strip()
             else:
                 # We have a word pattern.
@@ -116,7 +116,7 @@ class RegressiveImageryDictionary(object):
         results = RIDResults()
 
         def increment_category(category, token):
-            if not category in results.category_count:
+            if category not in results.category_count:
                 results.category_count[category] = 0
                 results.category_words[category] = []
             results.category_count[category] += 1
@@ -326,13 +326,12 @@ function toggle(cat) {
 
     def ensure_category(self, *args):
         def ensure_cat_aux(category, category_path):
-            if len(category_path) == 0 or category_path[0] == None:
+            if len(category_path) == 0 or category_path[0] is None:
                 return category
-            else:
-                cat = category_path.pop(0)
-                if not cat in category.children:
-                    category.children[cat] = Category(cat, category)
-                return ensure_cat_aux(category.children[cat], category_path)
+            cat = category_path.pop(0)
+            if cat not in category.children:
+                category.children[cat] = Category(cat, category)
+            return ensure_cat_aux(category.children[cat], category_path)
 
         return ensure_cat_aux(self.category_tree, list(args))
 
@@ -386,13 +385,12 @@ class DiscriminationTree(object):
     def retrieve(self, path):
         if len(path) == 0 or self.is_wildcard:
             return self.leaves
+        next_index = path[0]
+        next_disc_tree = self.child_matching_index(next_index)
+        if next_disc_tree is None:
+            return
         else:
-            next_index = path[0]
-            next_disc_tree = self.child_matching_index(next_index)
-            if next_disc_tree == None:
-                return
-            else:
-                return next_disc_tree.retrieve(path[1:])
+            return next_disc_tree.retrieve(path[1:])
 
     def put(self, path, leaf):
         if len(path) == 0:
@@ -410,7 +408,7 @@ class DiscriminationTree(object):
                 self.leaves.append(leaf)
             else:
                 next_disc_tree = self.child_matching_index(next_index)
-                if next_disc_tree == None:
+                if next_disc_tree is None:
                     next_disc_tree = DiscriminationTree(next_index, self)
                     self.interiors.append(next_disc_tree)
                 next_disc_tree.put(path[1:], leaf)
@@ -437,7 +435,7 @@ class Category(object):
         self.leaves.append(pattern)
 
     def full_name(self):
-        if self.parent == None or isinstance(self.parent, CategoryRoot):
+        if self.parent is None or isinstance(self.parent, CategoryRoot):
             return self.name
         else:
             return self.parent.full_name() + ":" + self.name
